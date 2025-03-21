@@ -4,7 +4,7 @@ import os
 s = os.path.abspath(__file__)
 c = s.replace(os.path.basename(os.path.abspath(__file__)), '')
 
-links = ["https://rutube.ru/video/ed6e7261292892cf3f9a59cf2c4e72d7/"]
+links = [""]
 
 # Get a list of videos
 # Each object is the same video but with different resolution
