@@ -15,4 +15,4 @@ links = [""]
 
 for i in links:
     rt = Rutube(i)
-    rt.get_best().download(c)
+    rt.get_best().download(c+"exit")
