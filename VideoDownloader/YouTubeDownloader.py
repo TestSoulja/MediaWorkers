@@ -1,18 +1,19 @@
-from pytubefix import YouTube
-from pytubefix.cli import on_progress
-import os
+from pytube import YouTube
 
-s = os.path.abspath(__file__)
-c = s.replace(os.path.basename(os.path.abspath(__file__)), '')
+#Creating video lists
+video_list = ['https://www.youtube.com/watch?v=_4SLzFJgAXM&list=PLPYTe3TV3OsvmHR_Pnviog2AF7g8uRDTM',
+              'https://www.youtube.com/watch?v=C1a3RxTYDsA&list=PLPYTe3TV3OsvmHR_Pnviog2AF7g8uRDTM&index=2']
 
-c = "C:/Users/TeSoul/YandexDisk/Youtube"
+#Looping through the list
+for i in video_list:
+  try:
+    yt = YouTube(i)
+    print('Downloading Link: ' + i)
+    print('Downloading video: ' + yt.streams[0].title)
+  except:
+    print("Connection Error")
 
-url = "https://www.youtube.com/watch?v=IzFy83zbN3o"
- 
-yt = YouTube(url, on_progress_callback = on_progress)
-print(yt.title)
- 
-ys = yt.streams.get_highest_resolution()
-ys.download(c)
-
-print("OK")
+  #filters out all the files with "mp4" extension
+  stream = yt.streams.filter(res="360p").first()
+  stream.download("Downloads/")
+print('Task Completed!')

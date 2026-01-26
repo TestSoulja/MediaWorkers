@@ -36,4 +36,4 @@ def merge_video_clip(path_directory, res_name):
         print(Fore.RED + '[-] Указанного пути не существует')
         return
     
-merge_video_clip(directory, "6")
+merge_video_clip(directory, "29")
