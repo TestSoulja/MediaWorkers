@@ -1,9 +1,3 @@
-from rutube import Rutube
-import os
-
-s = os.path.abspath(__file__)
-c = s.replace(os.path.basename(os.path.abspath(__file__)), '')
-
 links = ["https://rutube.ru/video/201513ef8a61e92d57af5017595f6d47/?playlist=381054",
          "https://rutube.ru/video/08029152b89e23d743fbc808c1079421/?playlist=381054",
          "https://rutube.ru/video/58d3c6dd1a8d9f8ca67ae7b21116ce14/?playlist=381054",
@@ -29,14 +23,3 @@ links = ["https://rutube.ru/video/201513ef8a61e92d57af5017595f6d47/?playlist=381
          "https://rutube.ru/video/096f7b634fbbd61dbc8be3a2c16142e9/?playlist=381054",
          "https://rutube.ru/video/6ac70a424573a3e02a0ea3157f9aa55a/?playlist=381054",
          "https://rutube.ru/video/ff1413d59808b58cd7b31b66313e3d09/?playlist=381054"]
-
-# Get a list of videos
-# Each object is the same video but with different resolution
-# print(rt.playlist)  # [Nature 4k (272x480), Nature 4k (408x720), Nature 4k (608x1080)]
-
-# Get a list of available resolutions
-# print(rt.available_resolutions)  # [480, 720, 1080]
-
-for i in links:
-    rt = Rutube(i)
-    rt.get_best().download(c+"exit")
