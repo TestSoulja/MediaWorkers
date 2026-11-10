@@ -1,0 +1,4 @@
+# Ссылки на ролики YouTube — по одной в строке.
+# Запуск: python main.py dl-youtube -f links/youtube.txt -o Downloads -q 360p
+https://www.youtube.com/watch?v=_4SLzFJgAXM&list=PLPYTe3TV3OsvmHR_Pnviog2AF7g8uRDTM
+https://www.youtube.com/watch?v=C1a3RxTYDsA&list=PLPYTe3TV3OsvmHR_Pnviog2AF7g8uRDTM&index=2
