@@ -1,39 +1,86 @@
 import os.path
+from pathlib import Path
 import time
-from numpy import arange
-import json
 
 from colorama import Fore
-from colorama import init
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-s = os.path.abspath(__file__)
-c = s.replace(os.path.basename(os.path.abspath(__file__)), '')
+
+# Получаем абсолютный путь к скрипту и родительскую директорию
+s = Path(__file__).resolve()
+c = str(s.parent)
 
 
 directory = r'D:\_Test\Out'
 
 
-def merge_video_clip(path_directory, res_name):
-    if os.path.exists(path_directory):
-        print(Fore.CYAN + '[+] Сканирование директории')
-        clip_in_dir = os.listdir(path_directory)
-        clip_to_merge = []
-        for clip in clip_in_dir:
-            # VideoFileClip(os.path.join(path_directory, clip))
-            clip_to_merge.append(VideoFileClip(os.path.join(path_directory, clip)))
+def merge_video_clip(path_directory: str, res_name: str):
+    """Объединяет все видеофайлы из указанной директории в один MP4 файл."""
 
+    # Нормализуем путь (добавляем слэш в конце, если нужно)
+    path_directory = Path(path_directory).as_posix()
+    if not path_directory.endswith('/'):
+        path_directory += '/'
 
-        print(Fore.YELLOW + f'[+] Найдено фалов: {len(clip_to_merge)}')
-        merge_final = concatenate_videoclips(clip_to_merge)
-        print(Fore.YELLOW + f'[+] Длительность объединяемого видео: '
-              f'{time.strftime("%H:%M:%S", time.gmtime(merge_final.duration))}\n[+] Начинаю объединение файлов...\n')
-        merge_final.write_videofile(c+"Output\\"+ f'{res_name}.mp4')
-        print(Fore.GREEN + '\n[+] Объединение файлов завершено')
-        print(Fore.GREEN + f'[+] Видео сохранено в папку: "{c +"Output/"+ f"{res_name}.mp4"}"')
+    print(Fore.CYAN + f'[+] Сканирование директории: {path_directory}')
+
+    # Получаем список всех файлов (не папок)
+    files_in_dir = [f for f in os.listdir(path_directory) if os.path.isfile(os.path.join(path_directory, f))]
+
+    if not files_in_dir:
+        print(Fore.YELLOW + '[-] Директория пуста или содержит только 1 файл')
         return
-    else:
-        print(Fore.RED + '[-] Указанного пути не существует')
+
+    clip_to_merge = []
+
+    # Проходим по файлам с нумерацией
+    for idx, clip in enumerate(files_in_dir, 1):
+        clip_path = os.path.join(path_directory, clip)
+
+        print(Fore.GREEN + f'    [{idx}/{len(files_in_dir)}] {clip}')
+
+        try:
+            v = VideoFileClip(clip_path, preserve_names=True)
+            clip_to_merge.append(v)
+        except Exception as e:
+            print(Fore.RED + f'        [!] Ошибка с файлом "{clip}": {e}')
+
+    if len(clip_to_merge) == 0:
+        print(Fore.YELLOW + '[-] Ничего не было добавлено в список клипов')
         return
     
-merge_video_clip(directory, "29")
+    print(Fore.YELLOW + f'\n[+] Найдено файлов для объединения: {len(clip_to_merge)}')
+
+    # Считаем общую длительность
+    total_duration = sum(c.duration for c in clip_to_merge)
+    duration_str = time.strftime("%H:%M:%S", time.gmtime(total_duration))
+
+    print(Fore.YELLOW + f'[+] Длительность объединяемого видео: {duration_str}\n')
+
+    # Объединяем все клипы
+    merge_final = concatenate_videoclips(clip_to_merge)
+
+    print('[+] Начинаю объединение файлов...')
+
+    # Создаём директорию вывода, если нужно
+    output_dir = Path(c + '/Output')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Имя итогового файла
+    output_filename = f'{res_name}.mp4'
+    output_path = output_dir / output_filename
+
+    # Пишем итоговый файл с настройками производительности
+    merge_final.write_videofile(
+        str(output_path),
+        fps=int(total_duration) if total_duration > 30 else 25,  # FPS на основе длительности
+        remove_temp=True  # Удаляет временные файлы после завершения
+    )
+
+    print(Fore.GREEN + '\n[+] Объединение файлов завершено!')
+    print(Fore.GREEN + f'[+] Видео сохранено в: "{output_path}"')
+
+
+# Запускаем функцию с текущей директорией и именем "29"
+merge_video_clip(directory, '29')
